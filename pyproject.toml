@@ -19,6 +19,8 @@ dependencies = [
   "psycopg[binary]>=3.2",
   "streamlit>=1.37",
   "mlflow>=2.14",
+  "requests>=2.32.5",
+  "typer>=0.17.3",
 ]
 
 [project.optional-dependencies]
@@ -30,3 +32,9 @@ select = ["E","F","I","B","UP","SIM"]
 
 [tool.black]
 line-length = 100
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+]
