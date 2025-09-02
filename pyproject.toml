@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
 [project]
 name = "customer-churn-xai"
 version = "0.1.0"
@@ -39,6 +43,11 @@ dev = [
     "pytest-cov>=6.2.1",
 ]
 
+[project.scripts]
+churn-xai = "churn_xai.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/churn_xai"]
+
 [tool.pytest.ini_options]
-pythonpath = ["."]
 testpaths = ["tests"]
