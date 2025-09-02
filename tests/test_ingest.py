@@ -57,7 +57,7 @@ def test_try_urls_uses_first_success(monkeypatch):
         # emulate first URL returning good CSV
         return good_csv
 
-    monkeypatch.setattr("src.data.ingest.stream_csv_bytes", fake_stream)
+    monkeypatch.setattr("churn_xai.data.ingest.stream_csv_bytes", fake_stream)
     df = try_urls(["http://u1", "http://u2"], expected_rows=2, expected_cols=2)
     assert df.equals(good_df)
 
@@ -65,6 +65,6 @@ def test_try_urls_all_fail(monkeypatch):
     def fake_stream(url):
         raise RuntimeError("download failed")
 
-    monkeypatch.setattr("src.data.ingest.stream_csv_bytes", fake_stream)
+    monkeypatch.setattr("churn_xai.data.ingest.stream_csv_bytes", fake_stream)
     with pytest.raises(RuntimeError):
         _ = try_urls(["http://u1", "http://u2"], expected_rows=2, expected_cols=2)
