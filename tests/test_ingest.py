@@ -8,7 +8,7 @@ import pandas as pd
 import pytest
 
 # Import the module under test
-from src.data.ingest import (
+from churn_xai.data.ingest import (
     validate_csv_shape,
     load_config,
     try_urls,
