@@ -1,7 +1,31 @@
 [project]
 name = "customer-churn-xai"
 version = "0.1.0"
-description = "Add your description here"
+description = "End-to-end churn prediction with explanations, API, and dashboard."
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = []
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.2",
+  "polars>=0.20",
+  "scikit-learn>=1.4",
+  "xgboost>=2.0",
+  "shap>=0.45",
+  "pydantic>=2.7",
+  "fastapi>=0.115",
+  "uvicorn>=0.30",
+  "pyyaml>=6.0",
+  "sqlalchemy>=2.0",
+  "psycopg[binary]>=3.2",
+  "streamlit>=1.37",
+  "mlflow>=2.14",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.2", "pytest-cov>=5.0", "ruff>=0.5", "black>=24.8", "mypy>=1.11", "types-PyYAML"]
+
+[tool.ruff]
+line-length = 100
+select = ["E","F","I","B","UP","SIM"]
+
+[tool.black]
+line-length = 100
