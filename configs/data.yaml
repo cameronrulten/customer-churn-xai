@@ -1,3 +1,13 @@
-raw_path: "data/raw/telco.csv"
-target: "Churn"
-id_col: "customerID"
+dataset:
+  name: ibm_telco_churn
+  filename: ibm_telco_churn.csv  # how we'll save it locally
+  expected_rows: 7043
+  expected_cols: 21
+  urls:
+    # Primary: IBM repo’s CSV (referenced by Databricks doc)
+    # See https://www.databricks.com/notebooks/telco-accel/01_intro.html
+    - https://raw.githubusercontent.com/IBM/telco-customer-churn-on-icp4d/master/data/Telco-Customer-Churn.csv
+    # Fallback: widely used learning mirror (same columns)
+    - https://raw.githubusercontent.com/alexeygrigorev/mlbookcamp-code/master/chapter-03-churn-prediction/WA_Fn-UseC_-Telco-Customer-Churn.csv
+paths:
+  raw_dir: data/raw
