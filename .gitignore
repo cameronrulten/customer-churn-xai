@@ -1,10 +1,17 @@
 # Python-generated files
 __pycache__/
 *.py[oc]
+.mypy_cache/
+.pytest_cache/
+.mlflow/
+mlruns/
 build/
+data/
+artifacts/
 dist/
 wheels/
 *.egg-info
 
 # Virtual environments
 .venv
+.env
