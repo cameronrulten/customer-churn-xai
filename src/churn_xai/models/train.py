@@ -52,9 +52,22 @@ def _preprocessor(cats, nums) -> ColumnTransformer:
         verbose_feature_names_out=False,
     )
 
+def _unwrap_estimator(calib) -> object:
+    """
+    Return the underlying (pre-calibration) estimator from a CalibratedClassifierCV,
+    handling version differences.
+    """
+    # Newer sklearn stores the original estimator on each calibrated classifier
+    if hasattr(calib, "calibrated_classifiers_") and calib.calibrated_classifiers_:
+        first = calib.calibrated_classifiers_[0]
+        return getattr(first, "estimator", getattr(first, "base_estimator", first))
+    # Fallbacks
+    return getattr(calib, "estimator", getattr(calib, "base_estimator", calib))
+
+
 def _calibrated(model, method: str, cv: int) -> CalibratedClassifierCV:
     # Wrap the base estimator with cross-validated calibration
-    return CalibratedClassifierCV(base_estimator=model, method=method, cv=cv, n_jobs=None)
+    return CalibratedClassifierCV(estimator=model, method=method, cv=cv, n_jobs=None)
 
 def _fit_and_eval(
     name: str,
@@ -125,7 +138,10 @@ def _compute_shap(
     """
     # Get the transformed feature matrix and feature names
     pre = pipeline.named_steps["pre"]
-    clf = pipeline.named_steps["clf"]
+    calib = pipeline.named_steps["clf"]
+    est = _unwrap_estimator(calib)
+    # clf = pipeline.named_steps["clf"]
+    
     # CalibratedClassifierCV wraps the estimator
     est = clf.base_estimator
 
@@ -201,8 +217,9 @@ def train(config: Path = typer.Option(Path("configs/model.yaml"), "--config", "-
     xgb_cfg = cfg["xgboost"]
 
     logreg = LogisticRegression(
-        C=log_cfg["C"], max_iter=log_cfg["max_iter"], class_weight=log_cfg["class_weight"], n_jobs=None
-    )
+        C=log_cfg["C"], max_iter=log_cfg["max_iter"], class_weight=log_cfg["class_weight"], solver="lbfgs", #n_jobs=None
+    ) #If we switch to solver="liblinear", we can pass n_jobs, otherwise it’s not needed here
+
     xgb = XGBClassifier(
         n_estimators=xgb_cfg["n_estimators"],
         learning_rate=xgb_cfg["learning_rate"],
