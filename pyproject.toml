@@ -45,6 +45,7 @@ dev = [
 
 [project.scripts]
 churn-xai = "churn_xai.data.ingest:app"
+features = "churn_xai.data.features:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/churn_xai"]
