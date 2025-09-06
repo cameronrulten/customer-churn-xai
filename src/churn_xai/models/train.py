@@ -143,7 +143,7 @@ def _compute_shap(
     # clf = pipeline.named_steps["clf"]
     
     # CalibratedClassifierCV wraps the estimator
-    est = clf.base_estimator
+    # est = clf.base_estimator
 
     Xt = pre.transform(X_sample)
     try:
