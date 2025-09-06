@@ -1,7 +1,9 @@
+import os
+
+import joblib
 from fastapi import FastAPI
 from pydantic import BaseModel
-import joblib
-import os
+
 
 class InputRow(BaseModel):
     tenure: int
