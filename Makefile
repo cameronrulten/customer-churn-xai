@@ -36,3 +36,6 @@ docker-up:
 
 docker-down:
 	docker compose down
+
+fetch-data:
+	uv run churn-xai fetch -c configs/data.yaml
