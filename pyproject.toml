@@ -44,7 +44,7 @@ dev = [
 ]
 
 [project.scripts]
-churn-xai = "churn_xai.ingest:app"
+churn-xai = "churn_xai.data.ingest:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/churn_xai"]
