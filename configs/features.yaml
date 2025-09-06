@@ -1,0 +1,16 @@
+dataset_name: ibm_telco_churn
+raw_path: data/raw/ibm_telco_churn.csv
+processed_dir: data/processed
+
+target: Churn
+id_col: customerID
+test_size: 0.2
+random_state: 42
+
+# Optional, leave empty to auto-detect
+categorical: []
+numeric: []
+
+# Simple, documented transforms toggles (kept minimal)
+coerce_totalcharges_numeric: true
+drop_na_target: true
