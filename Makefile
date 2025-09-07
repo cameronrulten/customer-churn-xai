@@ -3,6 +3,9 @@ export PYTHONWARNINGS=ignore
 
 .PHONY: env install lint format test train serve dashboard docker-up docker-down docker-build
 
+api:
+	uv run churn-api
+
 env:
 	uv sync
 
