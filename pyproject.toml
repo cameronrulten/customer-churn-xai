@@ -50,7 +50,7 @@ churn-xai = "churn_xai.data.ingest:app"
 features = "churn_xai.data.features:app"
 train = "churn_xai.models.train:app"
 evaluate = "churn_xai.models.evaluate:app"
-churn-api = "churn_xai.api.main:app"
+churn-api = "churn_xai.api.cli:main"
 
 
 [tool.hatch.build.targets.wheel]
