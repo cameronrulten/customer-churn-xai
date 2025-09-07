@@ -1,0 +1,5 @@
+processed_dir: data/processed
+artifacts_dir: artifacts
+reports_dir: reports
+target: Churn
+threshold: 0.5   # feel free to tune later
