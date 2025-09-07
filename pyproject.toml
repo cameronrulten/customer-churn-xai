@@ -25,6 +25,8 @@ dependencies = [
   "mlflow>=2.14",
   "requests>=2.32.5",
   "typer>=0.17.3",
+  "plotly>=5.20",
+  "httpx>=0.28"
 ]
 
 [project.optional-dependencies]
