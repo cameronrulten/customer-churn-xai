@@ -28,13 +28,17 @@ app = FastAPI(title="Customer Churn XAI API", version="0.1.0")
 
 # ---------- models ----------
 
+class TopFeature(BaseModel):
+    feature: str
+    impact: float
+
 class PredictRequest(BaseModel):
     # Accept dynamic feature dict; pydantic won't validate unknown keys strictly
     features: Dict[str, Any] = Field(..., description="Raw input feature mapping")
 
 class PredictResponse(BaseModel):
     proba: float
-    top_features: List[Dict[str, float]]  # [{"feature":"Tenure","impact":0.12}, ...]
+    top_features: List[TopFeature]
     used_model: str
 
 # ---------- init ----------
