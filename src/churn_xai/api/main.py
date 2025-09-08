@@ -11,6 +11,15 @@ import yaml
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
+
+# Safe defaults so NameError never happens in tests
+PIPE = None
+EXPLAINER = None
+FEAT_NAMES = None
+CHOSEN_MODEL = None
+SCHEMA = None
+
+
 ARTIFACTS_DIR = Path("artifacts")
 PROCESSED_DIR = Path("data/processed")
 METRICS_PATH = ARTIFACTS_DIR / "metrics.json"
@@ -71,30 +80,44 @@ def _group_shap_by_base(feat_names: List[str], shap_values: np.ndarray, k: int =
     top = sorted(contrib.items(), key=lambda x: -x[1])[:k]
     return [{"feature": n, "impact": v} for n, v in top]
 
+def _ensure_loaded():
+    if any(v is None for v in (PIPE, EXPLAINER, FEAT_NAMES, CHOSEN_MODEL, SCHEMA)):
+        _load()
+
 @app.on_event("startup")
 def _load() -> None:
     global PIPE, EXPLAINER, FEAT_NAMES, CHOSEN_MODEL, SCHEMA
     meta = yaml.safe_load((ARTIFACTS_DIR / "metrics.json").read_text())
     CHOSEN_MODEL = meta["chosen_model"]
     PIPE = joblib.load(ARTIFACTS_DIR / f"model_{CHOSEN_MODEL}.joblib")
-    SCHEMA = {"categorical": meta.get("cats", []), "numeric": meta.get("nums", [])}
+
+    # derive feature schema and target
+    schema = yaml.safe_load((PROCESSED_DIR / "schema.yaml").read_text())
+    target = schema["target"]
+    cats, nums = schema.get("categorical", []), schema.get("numeric", [])
+    SCHEMA = {"categorical": cats, "numeric": nums, "target": target}
+    # SCHEMA = {"categorical": meta.get("cats", []), "numeric": meta.get("nums", [])}
 
     # small background sample from train for SHAP
     train = pd.read_parquet(PROCESSED_DIR / "train.parquet")
-    Xb = train.drop(columns=[train.columns[-1]])  # target is last in our save
-    Xb = Xb.sample(min(500, len(Xb)), random_state=42)
+    # Xb = train.drop(columns=[train.columns[-1]])  # target is last in our save
+    # Xb = Xb.sample(min(500, len(Xb)), random_state=42)
+    Xb = train.drop(columns=[target]).sample(min(500, len(train)), random_state=42)
     EXPLAINER, FEAT_NAMES = _make_explainer(PIPE, Xb)
 
 @app.get("/health")
 def health():
+    _ensure_loaded()
     return {"status": "ok", "model": CHOSEN_MODEL}
 
 @app.get("/metadata")
 def metadata():
+    _ensure_loaded()
     return {"model": CHOSEN_MODEL, "features": SCHEMA}
 
 @app.post("/predict", response_model=PredictResponse)
 def predict(req: PredictRequest):
+    _ensure_loaded()
     # Build one-row DataFrame with all expected raw columns
     cols = SCHEMA["categorical"] + SCHEMA["numeric"]
     row = {c: req.features.get(c, None) for c in cols}
